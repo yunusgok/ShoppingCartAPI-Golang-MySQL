@@ -7,13 +7,13 @@ services:
       MYSQL_DATABASE: go_database
       MYSQL_USER: go_test
       MYSQL_PASSWORD: password
-      TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - db-data:/var/lib/mysql
     ports:
       - 3306:3306
     expose:
+      # Opens port 3306 on the container
       - '3306'
 
 volumes:
