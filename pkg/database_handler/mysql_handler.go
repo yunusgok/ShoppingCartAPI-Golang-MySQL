@@ -19,7 +19,7 @@ func NewMySQLDB(conString string) *gorm.DB {
 			NoLowerCase:   true,
 		},
 		NowFunc: func() time.Time {
-			return time.Now().UTC()
+			return time.Now()
 		},
 	})
 
