@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	_ "picnshop/docs"
 	"picnshop/pkg/graceful"
 	"time"
 
