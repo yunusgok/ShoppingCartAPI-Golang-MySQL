@@ -17,10 +17,9 @@ type Product struct {
 	Category   category.Category `gorm:"foreignKey:CategoryID"`
 }
 
-func NewProduct(name string, sku string, desc string, stockCount int, price float32, categoryId uint) *Product {
+func NewProduct(name string, desc string, stockCount int, price float32, categoryId uint) *Product {
 	return &Product{
 		Name:       name,
-		SKU:        sku,
 		Desc:       desc,
 		StockCount: stockCount,
 		Price:      price,
