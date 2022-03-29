@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	_ "picnshop/docs"
+	"picnshop/internal/api"
 	"picnshop/pkg/graceful"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 func main() {
 	r := gin.Default()
 	registerMiddlewares(r)
+	api.RegisterHandlers(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	srv := &http.Server{
 		Addr:    ":8080",
