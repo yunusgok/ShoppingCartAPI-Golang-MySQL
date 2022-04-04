@@ -12,13 +12,13 @@ func NewCategoryService(r CategoryRepository) *CategoryService {
 	}
 }
 
-func (c *CategoryService) Create(city *Category) error {
-	existCity := c.r.GetByName(city.Name)
+func (c *CategoryService) Create(category *Category) error {
+	existCity := c.r.GetByName(category.Name)
 	if len(existCity) > 0 {
 		return ErrCategoryExistWithName
 	}
 
-	err := c.r.Create(city)
+	err := c.r.Create(category)
 	if err != nil {
 		return err
 	}
