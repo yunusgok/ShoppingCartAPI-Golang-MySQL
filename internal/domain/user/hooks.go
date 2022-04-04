@@ -12,11 +12,11 @@ func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 		//Create random string a salt to add to password
 		salt := hash.CreateSalt()
 		//create a hashed string from given password and created salt
-		hash, err := hash.HashPassword(u.Password + salt)
+		hashPassword, err := hash.HashPassword(u.Password + salt)
 		if err != nil {
 			return nil
 		}
-		u.Password = hash
+		u.Password = hashPassword
 		u.Salt = salt
 	}
 

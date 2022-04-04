@@ -29,7 +29,7 @@ func CreateSalt() string {
 // bcrypt used as hashing algorithm
 // return a string with a size of 31 as a max size
 func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MaxCost)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
 }
 

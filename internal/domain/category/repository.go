@@ -1,6 +1,9 @@
 package category
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"log"
+)
 
 type CategoryRepository struct {
 	db *gorm.DB
@@ -13,10 +16,14 @@ func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 }
 
 func (r *CategoryRepository) Migration() {
-	r.db.AutoMigrate(&Category{})
+	err := r.db.AutoMigrate(&Category{})
+	if err != nil {
+		log.Print(err)
+	}
 	//https://gorm.io/docs/migration.html#content-inner
 }
 
+//TODO: create sample data from file
 func (r *CategoryRepository) InsertSampleData() {
 	cities := []Category{
 		{Name: "P1", Desc: "product1"},

@@ -6,22 +6,19 @@ import (
 
 type User struct {
 	gorm.Model
-	Username  string `gorm:"type:varchar(100);unique_index"`
-	Password  string
-	Hash      string
-	Salt      string
-	Roles     []string
-	Token     string `gorm:"unique"`
+	Username string `gorm:"type:varchar(30)"`
+	Password string `gorm:"type:varchar(100)"`
+	Salt     string `gorm:"type:varchar(100)"`
+	Token    string `gorm:"type:varchar(100)"`
+	//TODO add roles
 	IsDeleted bool
 }
 
-func NewUser(username string, password string, roles []string, token string) *User {
+func NewUser(username string, password string) *User {
 
 	return &User{
 		Username:  username,
 		Password:  password,
-		Roles:     roles,
-		Token:     token,
 		IsDeleted: false,
 	}
 }
