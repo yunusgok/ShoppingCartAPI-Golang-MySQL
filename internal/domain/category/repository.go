@@ -58,3 +58,12 @@ func (r *Repository) BulkCreate(categories []*Category) {
 		r.db.Where(Category{Name: c.Name}).Attrs(Category{Name: c.Name}).FirstOrCreate(&c)
 	}
 }
+
+func (r *Repository) GetAll(pageIndex, pageSize int) ([]Category, int) {
+	var categories []Category
+	var count int64
+
+	r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&categories).Count(&count)
+
+	return categories, int(count)
+}

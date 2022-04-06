@@ -5,20 +5,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"picnshop/internal/domain/category"
+	"picnshop/pkg/pagination"
 )
 
-type CategoryController struct {
+type Controller struct {
 	categoryService *category.CategoryService
 }
 
-func NewCategoryController(service *category.CategoryService) *CategoryController {
-	return &CategoryController{
+func NewCategoryController(service *category.CategoryService) *Controller {
+	return &Controller{
 		categoryService: service,
 	}
 }
 
 //TODO: add swagger
-func (c *CategoryController) CreateCategory(g *gin.Context) {
+func (c *Controller) CreateCategory(g *gin.Context) {
 	var req CreateCategoryRequest
 	if err := g.ShouldBind(&req); err != nil {
 		HandleError(g, err)
@@ -36,7 +37,7 @@ func (c *CategoryController) CreateCategory(g *gin.Context) {
 		Desc: newCategory.Desc,
 	})
 }
-func (c *CategoryController) BulkCreateCategory(g *gin.Context) {
+func (c *Controller) BulkCreateCategory(g *gin.Context) {
 	fileHeader, _ := g.FormFile("file")
 	count, err := c.categoryService.BulkCreate(fileHeader)
 	if err != nil {
@@ -44,6 +45,13 @@ func (c *CategoryController) BulkCreateCategory(g *gin.Context) {
 		return
 	}
 	g.String(http.StatusOK, fmt.Sprintf("'%s' uploaded! '%d' new categories created", fileHeader.Filename, count))
+}
+
+func (c *Controller) GetCategories(g *gin.Context) {
+	page := pagination.NewFromGinRequest(g, -1)
+	page = c.categoryService.GetAll(page)
+	g.JSON(http.StatusOK, page)
+
 }
 
 func HandleError(g *gin.Context, err error) {

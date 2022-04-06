@@ -3,6 +3,7 @@ package category
 import (
 	"mime/multipart"
 	"picnshop/pkg/csv_helper"
+	"picnshop/pkg/pagination"
 )
 
 type CategoryService struct {
@@ -42,4 +43,12 @@ func (c *CategoryService) BulkCreate(fileHeader *multipart.FileHeader) (int, err
 	}
 	c.r.BulkCreate(categories)
 	return len(categories), nil
+}
+
+func (c *CategoryService) GetAll(page *pagination.Pages) *pagination.Pages {
+	categories, count := c.r.GetAll(page.Page, page.PageSize)
+	page.Items = categories
+	page.TotalCount = count
+	return page
+
 }
