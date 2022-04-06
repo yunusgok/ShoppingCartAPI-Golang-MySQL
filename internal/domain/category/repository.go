@@ -5,17 +5,17 @@ import (
 	"log"
 )
 
-type CategoryRepository struct {
+type Repository struct {
 	db *gorm.DB
 }
 
-func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
-	return &CategoryRepository{
+func NewCategoryRepository(db *gorm.DB) *Repository {
+	return &Repository{
 		db: db,
 	}
 }
 
-func (r *CategoryRepository) Migration() {
+func (r *Repository) Migration() {
 	err := r.db.AutoMigrate(&Category{})
 	if err != nil {
 		log.Print(err)
@@ -24,18 +24,18 @@ func (r *CategoryRepository) Migration() {
 }
 
 //TODO: create sample data from file
-func (r *CategoryRepository) InsertSampleData() {
-	cities := []Category{
+func (r *Repository) InsertSampleData() {
+	categories := []Category{
 		{Name: "P1", Desc: "product1"},
 		{Name: "P2", Desc: "product1"},
 	}
 
-	for _, c := range cities {
+	for _, c := range categories {
 		r.db.Where(Category{Name: c.Name}).Attrs(Category{Name: c.Name}).FirstOrCreate(&c)
 	}
 }
 
-func (r *CategoryRepository) Create(c *Category) error {
+func (r *Repository) Create(c *Category) error {
 	result := r.db.Create(c)
 
 	if result.Error != nil {
@@ -45,9 +45,16 @@ func (r *CategoryRepository) Create(c *Category) error {
 	return nil
 }
 
-func (r *CategoryRepository) GetByName(name string) []Category {
+func (r *Repository) GetByName(name string) []Category {
 	var categories []Category
 	r.db.Where("Name LIKE ?", "%"+name+"%").Find(&categories)
 
 	return categories
+}
+
+//TODO: bulk insert library exist look for implementation
+func (r *Repository) BulkCreate(categories []*Category) {
+	for _, c := range categories {
+		r.db.Where(Category{Name: c.Name}).Attrs(Category{Name: c.Name}).FirstOrCreate(&c)
+	}
 }

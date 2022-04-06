@@ -5,7 +5,7 @@ type CreateCategoryRequest struct {
 	Desc string `json:"desc"`
 }
 
-type CategoryResponse struct {
+type CreateCategoryResponse struct {
 	Name string `json:"name"`
 	Desc string `json:"desc"`
 }

@@ -14,7 +14,7 @@ type UserController struct {
 	userService *user.Service
 }
 
-var secret string = "secret"
+var secret = "secret"
 
 func NewUserController(service *user.Service) *UserController {
 	return &UserController{
@@ -71,7 +71,9 @@ func (c *UserController) Login(g *gin.Context) {
 		//"roles": user.Roles,
 	})
 	//TODO: get secret from config
+	//TODO: update user
 	token := jwtHelper.GenerateToken(jwtClaims, secret)
+
 	g.JSON(http.StatusOK, token)
 }
 

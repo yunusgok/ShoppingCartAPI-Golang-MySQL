@@ -37,6 +37,7 @@ func RegisterCategoryHandlers(db *gorm.DB, r *gin.Engine) {
 		c.JSON(200, gin.H{"name": name, "code": code})
 	})
 	categoryGroup.POST("", categoryController.CreateCategory)
+	categoryGroup.POST("/upload", categoryController.BulkCreateCategory)
 }
 
 func RegisterUserHandlers(db *gorm.DB, r *gin.Engine) {

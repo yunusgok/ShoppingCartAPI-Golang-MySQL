@@ -1,10 +1,10 @@
 package category
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"picnshop/internal/domain/category"
-
-	"github.com/gin-gonic/gin"
 )
 
 type CategoryController struct {
@@ -17,42 +17,41 @@ func NewCategoryController(service *category.CategoryService) *CategoryControlle
 	}
 }
 
-// TODO: change comment
-// CreateCategory godoc
-// @Summary Creates a new city
-// @Tags City
-// @Accept  json
-// @Produce  json
-// @Param createRequest body CreateCityRequest true "City informations"
-// @Success 200 {object} CityResponse
-// @Failure 400 {object} map[string]string
-// @Failure 401 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
-// @Security ApiKeyAuth
-// @param Authorization header string true "Authorization"
-// @Router /city [post]
+//TODO: add swagger
 func (c *CategoryController) CreateCategory(g *gin.Context) {
 	var req CreateCategoryRequest
 	if err := g.ShouldBind(&req); err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{
-			"error_message": "Check your request body.",
-		})
-		g.Abort()
+		HandleError(g, err)
 		return
 	}
-	category := category.NewCategory(req.Name, req.Desc)
-	err := c.categoryService.Create(category)
+	newCategory := category.NewCategory(req.Name, req.Desc)
+	err := c.categoryService.Create(newCategory)
 	if err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{
-			"error_message": err.Error(),
-		})
-		g.Abort()
+		HandleError(g, err)
 		return
 	}
 
-	g.JSON(http.StatusCreated, CategoryResponse{
-		Name: category.Name,
-		Desc: category.Desc,
+	g.JSON(http.StatusCreated, CreateCategoryResponse{
+		Name: newCategory.Name,
+		Desc: newCategory.Desc,
 	})
+}
+func (c *CategoryController) BulkCreateCategory(g *gin.Context) {
+	fileHeader, _ := g.FormFile("file")
+	count, err := c.categoryService.BulkCreate(fileHeader)
+	if err != nil {
+		HandleError(g, err)
+		return
+	}
+	g.String(http.StatusOK, fmt.Sprintf("'%s' uploaded! '%d' new categories created", fileHeader.Filename, count))
+}
+
+func HandleError(g *gin.Context, err error) {
+
+	g.JSON(http.StatusBadRequest, gin.H{
+		"error_message": err.Error(),
+	})
+	g.Abort()
+	return
+
 }
