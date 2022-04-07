@@ -42,3 +42,21 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 		Message: "product created",
 	})
 }
+
+func (c *Controller) DeleteProduct(g *gin.Context) {
+	var req DeleteProductRequest
+	if err := g.ShouldBind(&req); err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	err := c.productService.DeleteProduct(req.SKU)
+	if err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	g.JSON(http.StatusCreated, CreateProductResponse{
+		Message: "Product Deleted",
+	})
+}

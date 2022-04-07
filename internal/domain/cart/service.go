@@ -46,15 +46,6 @@ func (c *Service) AddItem(userID uint, sku string, count int) error {
 	return nil
 }
 
-func (c *Service) CreateProduct(name string, desc string, count int, price float32, cid uint) error {
-	newProduct := product.NewProduct(name, desc, count, price, cid)
-	err := c.productRepository.Create(newProduct)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (c *Service) GetCartItems(userId uint) ([]Item, error) {
 	currentCart, err := c.cartRepository.FindOrByUserID(userId)
 	if err != nil {

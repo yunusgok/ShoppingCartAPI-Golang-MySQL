@@ -11,3 +11,7 @@ type CreateProductRequest struct {
 type CreateProductResponse struct {
 	Message string `json:"message"`
 }
+
+type DeleteProductRequest struct {
+	SKU string `json:"sku"`
+}

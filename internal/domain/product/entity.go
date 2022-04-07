@@ -15,6 +15,7 @@ type Product struct {
 	Price      float32
 	CategoryID uint
 	Category   category.Category `json:"-"`
+	IsDeleted  bool
 }
 
 func NewProduct(name string, desc string, stockCount int, price float32, cid uint) *Product {
@@ -24,5 +25,6 @@ func NewProduct(name string, desc string, stockCount int, price float32, cid uin
 		StockCount: stockCount,
 		Price:      price,
 		CategoryID: cid,
+		IsDeleted:  false,
 	}
 }

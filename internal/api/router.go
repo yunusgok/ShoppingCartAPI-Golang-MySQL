@@ -88,7 +88,8 @@ func RegisterProductHandlers(db *gorm.DB, r *gin.Engine) {
 			"message": "pong",
 		})
 	})
-	productGroup.GET("/", productController.GetProducts)
-	productGroup.POST("/product", productController.CreateProduct)
+	productGroup.GET("", productController.GetProducts)
+	productGroup.POST("", productController.CreateProduct)
+	productGroup.DELETE("", productController.DeleteProduct)
 
 }

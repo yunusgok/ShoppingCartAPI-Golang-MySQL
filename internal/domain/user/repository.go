@@ -2,6 +2,7 @@ package user
 
 import (
 	"gorm.io/gorm"
+	"log"
 )
 
 type Repository struct {
@@ -17,33 +18,28 @@ func NewUserRepository(db *gorm.DB) *Repository {
 func (r *Repository) Migration() {
 	err := r.db.AutoMigrate(&User{})
 	if err != nil {
-		return
+		log.Print(err)
 	}
-	//https://gorm.io/docs/migration.html#content-inner
 }
 
 func (r *Repository) Create(u *User) error {
 	result := r.db.Create(u)
 
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
+	return result.Error
 }
 
-//TODO it should return 1 result
-func (r *Repository) GetByName(name string) []User {
-	var users []User
-	r.db.First(&users, "UserName = ?", name)
-	return users
+func (r *Repository) GetByName(name string) (User, error) {
+	var user User
+	err := r.db.Where("UserName = ?", name).Where("IsDeleted = ?", 0).First(&user, "UserName = ?", name).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
 }
 
 func (r *Repository) InsertSampleData() {
 	user := NewUser("admin", "admin")
 
-	err := r.db.Where(User{Username: user.Username}).Attrs(User{Username: user.Username, Password: user.Password}).FirstOrCreate(&user).Error
-	if err != nil {
-		return
-	}
+	r.db.Where(User{Username: user.Username}).Attrs(User{Username: user.Username, Password: user.Password}).FirstOrCreate(&user)
+
 }

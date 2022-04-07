@@ -16,25 +16,20 @@ func NewUserService(r Repository) *Service {
 
 //TODO: add validation middleware
 func (c *Service) Create(user *User) error {
-	existUser := c.r.GetByName(user.Username)
-	if len(existUser) > 0 {
+	_, err := c.r.GetByName(user.Username)
+	if err == nil {
 		return ErrUserExistWithName
 	}
 
-	err := c.r.Create(user)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	err = c.r.Create(user)
+	return err
 }
 
 func (c *Service) GetUser(username string, password string) (User, error) {
-	users := c.r.GetByName(username)
-	if len(users) == 0 {
+	user, err := c.r.GetByName(username)
+	if err != nil {
 		return User{}, ErrUserNotFound
 	}
-	user := users[0]
 	match := hash.CheckPasswordHash(password+user.Salt, user.Password)
 	if !match {
 		return User{}, ErrUserNotFound
