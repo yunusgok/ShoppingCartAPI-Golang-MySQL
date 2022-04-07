@@ -3,6 +3,7 @@ package api
 import (
 	cartApi "picnshop/internal/api/cart"
 	categoryApi "picnshop/internal/api/category"
+	productApi "picnshop/internal/api/product"
 	userApi "picnshop/internal/api/user"
 
 	"picnshop/internal/domain/cart"
@@ -22,6 +23,7 @@ func RegisterHandlers(r *gin.Engine) {
 	RegisterUserHandlers(db, r)
 	RegisterCategoryHandlers(db, r)
 	RegisterCartHandlers(db, r)
+	RegisterProductHandlers(db, r)
 	//TODO: delete ping
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -74,7 +76,19 @@ func RegisterCartHandlers(db *gorm.DB, r *gin.Engine) {
 		})
 	})
 	cartGroup.POST("/item", cartController.AddItem)
-	cartGroup.POST("/product", cartController.CreateProduct)
 	cartGroup.GET("/", cartController.GetCart)
+}
+func RegisterProductHandlers(db *gorm.DB, r *gin.Engine) {
+	productRepo := product.NewProductRepository(db)
+	productService := product.NewService(*productRepo)
+	productController := productApi.NewProductController(*productService)
+	productGroup := r.Group("/product")
+	productGroup.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	productGroup.GET("/", productController.GetProducts)
+	productGroup.POST("/product", productController.CreateProduct)
 
 }

@@ -50,3 +50,12 @@ func (r *Repository) Create(p *Product) error {
 
 	return nil
 }
+
+func (r *Repository) GetAll(pageIndex, pageSize int) ([]Product, int) {
+	var products []Product
+	var count int64
+
+	r.db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(&products).Count(&count)
+
+	return products, int(count)
+}

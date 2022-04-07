@@ -36,24 +36,6 @@ func (c *Controller) AddItem(g *gin.Context) {
 	})
 }
 
-func (c *Controller) CreateProduct(g *gin.Context) {
-	var req CreateProductRequest
-	if err := g.ShouldBind(&req); err != nil {
-		response.HandleError(g, err)
-		return
-	}
-
-	err := c.cartService.CreateProduct(req.Name, req.Desc, req.Count, req.Price, req.CategoryID)
-	if err != nil {
-		response.HandleError(g, err)
-		return
-	}
-
-	g.JSON(http.StatusCreated, CreateCategoryResponse{
-		Name: "product created",
-	})
-}
-
 func (c *Controller) GetCart(g *gin.Context) {
 	userId := pagination.ParseInt(g.Query("userId"), -1)
 
