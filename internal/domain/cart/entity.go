@@ -23,14 +23,14 @@ type Item struct {
 	Product   product.Product `gorm:"foreignKey:ProductID"`
 	ProductID uint
 	Count     int
-	CartRefer uint
-	Cart      Cart `gorm:"foreignKey:CartRefer"`
+	CartID    uint
+	Cart      Cart `gorm:"foreignKey:CartID" json:"-"`
 }
 
 func NewCartItem(productId uint, cartId uint, count int) *Item {
 	return &Item{
 		ProductID: productId,
 		Count:     count,
-		CartRefer: cartId,
+		CartID:    cartId,
 	}
 }

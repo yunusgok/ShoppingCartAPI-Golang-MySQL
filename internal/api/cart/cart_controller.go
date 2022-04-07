@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"picnshop/internal/domain/cart"
+	"picnshop/pkg/pagination"
 	"picnshop/pkg/response"
 )
 
@@ -51,4 +52,15 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 	g.JSON(http.StatusCreated, CreateCategoryResponse{
 		Name: "product created",
 	})
+}
+
+func (c *Controller) GetCart(g *gin.Context) {
+	userId := pagination.ParseInt(g.Query("userId"), -1)
+
+	result, err := c.cartService.GetCartItems(uint(userId))
+	if err != nil {
+		response.HandleError(g, err)
+		return
+	}
+	g.JSON(200, result)
 }

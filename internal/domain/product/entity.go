@@ -14,7 +14,7 @@ type Product struct {
 	StockCount int
 	Price      float32
 	CategoryID uint
-	Category   category.Category
+	Category   category.Category `json:"-"`
 }
 
 func NewProduct(name string, desc string, stockCount int, price float32, cid uint) *Product {

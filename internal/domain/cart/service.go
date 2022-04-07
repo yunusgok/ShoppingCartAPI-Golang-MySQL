@@ -54,3 +54,16 @@ func (c *Service) CreateProduct(name string, desc string, count int, price float
 	}
 	return nil
 }
+
+func (c *Service) GetCartItems(userId uint) ([]Item, error) {
+	currentCart, err := c.cartRepository.FindOrByUserID(userId)
+	if err != nil {
+		return nil, err
+	}
+	items, err := c.cartItemRepository.GetItems(currentCart.ID)
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+
+}

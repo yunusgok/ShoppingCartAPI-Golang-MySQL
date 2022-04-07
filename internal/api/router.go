@@ -75,5 +75,6 @@ func RegisterCartHandlers(db *gorm.DB, r *gin.Engine) {
 	})
 	cartGroup.POST("/item", cartController.AddItem)
 	cartGroup.POST("/product", cartController.CreateProduct)
+	cartGroup.GET("/", cartController.GetCart)
 
 }

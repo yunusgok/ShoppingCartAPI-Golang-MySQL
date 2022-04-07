@@ -57,25 +57,25 @@ func New(page, pageSize, total int) *Pages {
 // NewFromRequest creates a Pages object using the query parameters found in the given HTTP request.
 // count stands for the total number of items. Use -1 if this is unknown.
 func NewFromRequest(req *http.Request, count int) *Pages {
-	page := parseInt(req.URL.Query().Get(PageVar), 1)
-	pageSize := parseInt(req.URL.Query().Get(PageSizeVar), DefaultPageSize)
+	page := ParseInt(req.URL.Query().Get(PageVar), 1)
+	pageSize := ParseInt(req.URL.Query().Get(PageSizeVar), DefaultPageSize)
 	return New(page, pageSize, count)
 }
 
 func NewFromGinRequest(g *gin.Context, count int) *Pages {
-	page := parseInt(g.Query(PageVar), 1)
-	pageSize := parseInt(g.Query(PageSizeVar), DefaultPageSize)
+	page := ParseInt(g.Query(PageVar), 1)
+	pageSize := ParseInt(g.Query(PageSizeVar), DefaultPageSize)
 	return New(page, pageSize, count)
 }
 
 //func GetPaginationParametersFromRequest(g *gin.Context) (pageIndex, pageSize int) {
-//	pageIndex = parseInt(g.Query(PageVar), 1)
-//	pageSize = parseInt(g.Query(PageSizeVar), DefaultPageSize)
+//	pageIndex = ParseInt(g.Query(PageVar), 1)
+//	pageSize = ParseInt(g.Query(PageSizeVar), DefaultPageSize)
 //	return pageIndex, pageSize
 //}
 
-// parseInt parses a string into an integer. If parsing is failed, defaultValue will be returned.
-func parseInt(value string, defaultValue int) int {
+// ParseInt parses a string into an integer. If parsing is failed, defaultValue will be returned.
+func ParseInt(value string, defaultValue int) int {
 	if value == "" {
 		return defaultValue
 	}

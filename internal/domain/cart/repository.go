@@ -89,3 +89,18 @@ func (r *ItemRepository) Create(ci *Item) error {
 
 	return nil
 }
+
+func (r *ItemRepository) GetItems(cartId uint) ([]Item, error) {
+	var cartItems []Item
+	err := r.db.Where(&Item{CartID: cartId}).Find(&cartItems).Error
+	if err != nil {
+		return nil, err
+	}
+	for i, item := range cartItems {
+		err := r.db.Model(item).Association("Product").Find(&cartItems[i].Product)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return cartItems, nil
+}

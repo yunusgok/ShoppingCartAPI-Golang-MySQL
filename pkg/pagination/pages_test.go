@@ -91,7 +91,7 @@ func TestPages_BuildLinkHeader(t *testing.T) {
 
 }
 
-func Test_parseInt(t *testing.T) {
+func Test_ParseInt(t *testing.T) {
 	type args struct {
 		value        string
 		defaultValue int
@@ -107,8 +107,8 @@ func Test_parseInt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parseInt(tt.args.value, tt.args.defaultValue); got != tt.want {
-				t.Errorf("parseInt() = %v, want %v", got, tt.want)
+			if got := ParseInt(tt.args.value, tt.args.defaultValue); got != tt.want {
+				t.Errorf("ParseInt() = %v, want %v", got, tt.want)
 			}
 		})
 	}
