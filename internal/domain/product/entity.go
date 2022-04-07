@@ -9,20 +9,20 @@ import (
 type Product struct {
 	gorm.Model
 	Name       string
-	SKU        string `gorm:"type:varchar(100);unique_index"`
+	SKU        string
 	Desc       string
 	StockCount int
 	Price      float32
 	CategoryID uint
-	Category   category.Category `gorm:"foreignKey:CategoryID"`
+	Category   category.Category
 }
 
-func NewProduct(name string, desc string, stockCount int, price float32, categoryId uint) *Product {
+func NewProduct(name string, desc string, stockCount int, price float32, cid uint) *Product {
 	return &Product{
 		Name:       name,
 		Desc:       desc,
 		StockCount: stockCount,
 		Price:      price,
-		CategoryID: categoryId,
+		CategoryID: cid,
 	}
 }

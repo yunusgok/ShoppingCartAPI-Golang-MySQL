@@ -10,20 +10,20 @@ import (
 	"time"
 )
 
-type UserController struct {
+type Controller struct {
 	userService *user.Service
 }
 
 var secret = "secret"
 
-func NewUserController(service *user.Service) *UserController {
-	return &UserController{
+func NewUserController(service *user.Service) *Controller {
+	return &Controller{
 		userService: service,
 	}
 }
 
 //TODO: add password match middleware
-func (c *UserController) CreateUser(g *gin.Context) {
+func (c *Controller) CreateUser(g *gin.Context) {
 	var req CreateUserRequest
 	if err := g.ShouldBind(&req); err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{
@@ -47,7 +47,7 @@ func (c *UserController) CreateUser(g *gin.Context) {
 	})
 }
 
-func (c *UserController) Login(g *gin.Context) {
+func (c *Controller) Login(g *gin.Context) {
 	var req LoginRequest
 	if err := g.ShouldBind(&req); err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{
@@ -77,7 +77,7 @@ func (c *UserController) Login(g *gin.Context) {
 	g.JSON(http.StatusOK, token)
 }
 
-func (c *UserController) VerifyToken(g *gin.Context) {
+func (c *Controller) VerifyToken(g *gin.Context) {
 	token := g.GetHeader("Authorization")
 	decodedClaims := jwtHelper.VerifyToken(token, secret, os.Getenv("ENV"))
 

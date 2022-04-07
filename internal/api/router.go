@@ -1,8 +1,12 @@
 package api
 
 import (
+	cartApi "picnshop/internal/api/cart"
 	categoryApi "picnshop/internal/api/category"
 	userApi "picnshop/internal/api/user"
+
+	"picnshop/internal/domain/cart"
+	"picnshop/internal/domain/product"
 
 	"picnshop/internal/domain/category"
 	"picnshop/internal/domain/user"
@@ -17,6 +21,7 @@ func RegisterHandlers(r *gin.Engine) {
 	db := database_handler.NewMySQLDB("go_test:password@tcp(127.0.0.1:3306)/go_database?parseTime=True&loc=Local")
 	RegisterUserHandlers(db, r)
 	RegisterCategoryHandlers(db, r)
+	RegisterCartHandlers(db, r)
 	//TODO: delete ping
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -53,5 +58,22 @@ func RegisterUserHandlers(db *gorm.DB, r *gin.Engine) {
 	})
 	userGroup.POST("", userController.CreateUser)
 	userGroup.POST("/login", userController.Login)
+
+}
+
+func RegisterCartHandlers(db *gorm.DB, r *gin.Engine) {
+	cartRepo := cart.NewCartRepository(db)
+	cartItemRepo := cart.NewCartItemRepository(db)
+	productRepo := product.NewProductRepository(db)
+	cartService := cart.NewService(*cartRepo, *cartItemRepo, *productRepo)
+	cartController := cartApi.NewCartController(cartService)
+	cartGroup := r.Group("/cart")
+	cartGroup.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	cartGroup.POST("/item", cartController.AddItem)
+	cartGroup.POST("/product", cartController.CreateProduct)
 
 }
