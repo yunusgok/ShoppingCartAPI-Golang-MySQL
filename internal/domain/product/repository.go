@@ -22,9 +22,13 @@ func (r *Repository) Migration() {
 	}
 }
 
-func (r *Repository) Update(product Product) error {
-	result := r.db.Save(product)
-	return result.Error
+func (r *Repository) Update(updateProduct Product) error {
+	savedProduct, err := r.FindBySKU(updateProduct.SKU)
+	if err != nil {
+		return err
+	}
+	err = r.db.Model(&savedProduct).Updates(updateProduct).Error
+	return err
 }
 
 func (r *Repository) FindBySKU(sku string) (*Product, error) {
@@ -58,6 +62,6 @@ func (r *Repository) Delete(sku string) error {
 	}
 	currentProduct.IsDeleted = true
 
-	err = r.Update(*currentProduct)
+	err = r.db.Save(currentProduct).Error
 	return err
 }

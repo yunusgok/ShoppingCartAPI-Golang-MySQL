@@ -60,3 +60,21 @@ func (c *Controller) DeleteProduct(g *gin.Context) {
 		Message: "Product Deleted",
 	})
 }
+
+func (c *Controller) UpdateProduct(g *gin.Context) {
+	var req UpdateProductRequest
+	if err := g.ShouldBind(&req); err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	err := c.productService.UpdateProduct(req.ToProduct())
+	if err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	g.JSON(http.StatusCreated, CreateProductResponse{
+		Message: "Product Updated",
+	})
+}

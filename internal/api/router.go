@@ -91,5 +91,6 @@ func RegisterProductHandlers(db *gorm.DB, r *gin.Engine) {
 	productGroup.GET("", productController.GetProducts)
 	productGroup.POST("", productController.CreateProduct)
 	productGroup.DELETE("", productController.DeleteProduct)
+	productGroup.PATCH("", productController.UpdateProduct)
 
 }

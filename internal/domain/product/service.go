@@ -33,3 +33,8 @@ func (c *Service) DeleteProduct(sku string) error {
 	err := c.productRepository.Delete(sku)
 	return err
 }
+
+func (c *Service) UpdateProduct(product *Product) error {
+	err := c.productRepository.Update(*product)
+	return err
+}
