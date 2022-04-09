@@ -61,7 +61,7 @@ func (r *ItemRepository) Migration() {
 }
 
 func (r *ItemRepository) Update(item Item) error {
-	result := r.db.Save(item)
+	result := r.db.Save(&item)
 
 	if result.Error != nil {
 		return result.Error
@@ -70,10 +70,10 @@ func (r *ItemRepository) Update(item Item) error {
 	return nil
 }
 
-func (r *ItemRepository) FindByID(pid uint) (*Item, error) {
+func (r *ItemRepository) FindByID(pid uint, cid uint) (*Item, error) {
 	var item *Item
 
-	err := r.db.Where(&Item{ProductID: pid}).First(&item).Error
+	err := r.db.Where(&Item{ProductID: pid, CartID: cid}).First(&item).Error
 	if err != nil {
 		return nil, errors.New("cart item not found")
 	}

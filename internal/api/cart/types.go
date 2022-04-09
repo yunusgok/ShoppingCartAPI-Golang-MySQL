@@ -1,12 +1,11 @@
 package cart
 
-type AddItemToCartRequest struct {
+type ItemCartRequest struct {
 	UserId uint   `json:"userId"`
 	SKU    string `json:"sku"`
 	Count  int    `json:"count"`
 }
 
 type CreateCategoryResponse struct {
-	Name string `json:"name"`
-	Desc string `json:"desc"`
+	Message string `json:"message"`
 }

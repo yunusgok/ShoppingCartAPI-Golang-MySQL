@@ -19,7 +19,7 @@ func NewCartController(service *cart.Service) *Controller {
 }
 
 func (c *Controller) AddItem(g *gin.Context) {
-	var req AddItemToCartRequest
+	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
 		response.HandleError(g, err)
 		return
@@ -32,7 +32,25 @@ func (c *Controller) AddItem(g *gin.Context) {
 	}
 
 	g.JSON(http.StatusCreated, CreateCategoryResponse{
-		Name: "created",
+		Message: "created",
+	})
+}
+
+func (c *Controller) UpdateItem(g *gin.Context) {
+	var req ItemCartRequest
+	if err := g.ShouldBind(&req); err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	err := c.cartService.UpdateItem(req.UserId, req.SKU, req.Count)
+	if err != nil {
+		response.HandleError(g, err)
+		return
+	}
+
+	g.JSON(http.StatusCreated, CreateCategoryResponse{
+		Message: "updated",
 	})
 }
 
