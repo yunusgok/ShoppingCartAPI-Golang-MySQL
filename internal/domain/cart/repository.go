@@ -34,9 +34,18 @@ func (r *Repository) Update(cart Cart) error {
 	return nil
 }
 
-func (r *Repository) FindOrByUserID(userId uint) (*Cart, error) {
+func (r *Repository) FindOrCreateByUserID(userId uint) (*Cart, error) {
 	var cart *Cart
 	err := r.db.Where(Cart{UserID: userId}).Attrs(NewCart(userId)).FirstOrCreate(&cart).Error
+	if err != nil {
+		return nil, err
+	}
+	return cart, nil
+}
+
+func (r *Repository) FindByUserID(userId uint) (*Cart, error) {
+	var cart *Cart
+	err := r.db.Where(Cart{UserID: userId}).Attrs(NewCart(userId)).First(&cart).Error
 	if err != nil {
 		return nil, user.ErrUserNotFound
 	}

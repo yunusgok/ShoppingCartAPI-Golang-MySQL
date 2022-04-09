@@ -14,7 +14,6 @@ type Service struct {
 func NewService(cartRepository Repository, itemRepository ItemRepository, productRepository product.Repository) *Service {
 	cartRepository.Migration()
 	itemRepository.Migration()
-	productRepository.Migration()
 	return &Service{
 		cartRepository:     cartRepository,
 		cartItemRepository: itemRepository,
@@ -29,7 +28,7 @@ func (c *Service) AddItem(userID uint, sku string, count int) error {
 	if err != nil {
 		return err
 	}
-	currentCart, err := c.cartRepository.FindOrByUserID(userID)
+	currentCart, err := c.cartRepository.FindOrCreateByUserID(userID)
 	if err != nil {
 		return err
 	}
@@ -53,7 +52,7 @@ func (c *Service) UpdateItem(userID uint, sku string, count int) error {
 	if err != nil {
 		return err
 	}
-	currentCart, err := c.cartRepository.FindOrByUserID(userID)
+	currentCart, err := c.cartRepository.FindOrCreateByUserID(userID)
 	if err != nil {
 		return err
 	}
@@ -71,7 +70,7 @@ func (c *Service) UpdateItem(userID uint, sku string, count int) error {
 }
 
 func (c *Service) GetCartItems(userId uint) ([]Item, error) {
-	currentCart, err := c.cartRepository.FindOrByUserID(userId)
+	currentCart, err := c.cartRepository.FindOrCreateByUserID(userId)
 	if err != nil {
 		return nil, err
 	}

@@ -8,10 +8,10 @@ type Service struct {
 	productRepository Repository
 }
 
-func NewService(cartRepository Repository) *Service {
-	cartRepository.Migration()
+func NewService(productRepository Repository) *Service {
+	productRepository.Migration()
 	return &Service{
-		productRepository: cartRepository,
+		productRepository: productRepository,
 	}
 
 }

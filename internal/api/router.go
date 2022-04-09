@@ -3,10 +3,12 @@ package api
 import (
 	cartApi "picnshop/internal/api/cart"
 	categoryApi "picnshop/internal/api/category"
+	orderApi "picnshop/internal/api/order"
 	productApi "picnshop/internal/api/product"
 	userApi "picnshop/internal/api/user"
 
 	"picnshop/internal/domain/cart"
+	"picnshop/internal/domain/order"
 	"picnshop/internal/domain/product"
 
 	"picnshop/internal/domain/category"
@@ -14,84 +16,81 @@ import (
 	"picnshop/pkg/database_handler"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func RegisterHandlers(r *gin.Engine) {
-	//TODO get settings from config
-	db := database_handler.NewMySQLDB("go_test:password@tcp(127.0.0.1:3306)/go_database?parseTime=True&loc=Local")
-	RegisterUserHandlers(db, r)
-	RegisterCategoryHandlers(db, r)
-	RegisterCartHandlers(db, r)
-	RegisterProductHandlers(db, r)
-	//TODO: delete ping
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
+type Databases struct {
+	categoryRepository    *category.Repository
+	userRepository        *user.Repository
+	productRepository     *product.Repository
+	cartRepository        *cart.Repository
+	cartItemRepository    *cart.ItemRepository
+	orderRepository       *order.Repository
+	orderedItemRepository *order.OrderedItemRepository
 }
 
-func RegisterCategoryHandlers(db *gorm.DB, r *gin.Engine) {
-	categoryRepository := category.NewCategoryRepository(db)
-	categoryService := category.NewCategoryService(*categoryRepository)
+func CreateDBs() *Databases {
+	//TODO get settings from config
+	db := database_handler.NewMySQLDB("go_test:password@tcp(127.0.0.1:3306)/go_database?parseTime=True&loc=Local")
+	return &Databases{
+		categoryRepository:    category.NewCategoryRepository(db),
+		cartRepository:        cart.NewCartRepository(db),
+		userRepository:        user.NewUserRepository(db),
+		productRepository:     product.NewProductRepository(db),
+		cartItemRepository:    cart.NewCartItemRepository(db),
+		orderRepository:       order.NewOrderRepository(db),
+		orderedItemRepository: order.NewOrderedItemRepository(db),
+	}
+}
+func RegisterHandlers(r *gin.Engine) {
+	dbs := *CreateDBs()
+	RegisterUserHandlers(r, dbs)
+	RegisterCategoryHandlers(r, dbs)
+	RegisterCartHandlers(r, dbs)
+	RegisterProductHandlers(r, dbs)
+	RegisterOrderHandlers(r, dbs)
+}
+
+func RegisterCategoryHandlers(r *gin.Engine, dbs Databases) {
+	categoryService := category.NewCategoryService(*dbs.categoryRepository)
 	categoryController := categoryApi.NewCategoryController(categoryService)
 	categoryGroup := r.Group("/category")
-	categoryGroup.GET("/:name/:code", func(c *gin.Context) {
-		name := c.Param("name")
-		code := c.Param("code")
-		c.JSON(200, gin.H{"name": name, "code": code})
-	})
 	categoryGroup.POST("", categoryController.CreateCategory)
 	categoryGroup.GET("", categoryController.GetCategories)
 	categoryGroup.POST("/upload", categoryController.BulkCreateCategory)
 }
 
-func RegisterUserHandlers(db *gorm.DB, r *gin.Engine) {
-	userRepository := user.NewUserRepository(db)
-	userService := user.NewUserService(*userRepository)
+func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
+	userService := user.NewUserService(*dbs.userRepository)
 	userController := userApi.NewUserController(userService)
 	userGroup := r.Group("/user")
-	userGroup.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 	userGroup.POST("", userController.CreateUser)
 	userGroup.POST("/login", userController.Login)
 
 }
 
-func RegisterCartHandlers(db *gorm.DB, r *gin.Engine) {
-	cartRepo := cart.NewCartRepository(db)
-	cartItemRepo := cart.NewCartItemRepository(db)
-	productRepo := product.NewProductRepository(db)
-	cartService := cart.NewService(*cartRepo, *cartItemRepo, *productRepo)
+func RegisterCartHandlers(r *gin.Engine, dbs Databases) {
+	cartService := cart.NewService(*dbs.cartRepository, *dbs.cartItemRepository, *dbs.productRepository)
 	cartController := cartApi.NewCartController(cartService)
 	cartGroup := r.Group("/cart")
-	cartGroup.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 	cartGroup.POST("/item", cartController.AddItem)
 	cartGroup.PATCH("/item", cartController.UpdateItem)
 	cartGroup.GET("/", cartController.GetCart)
 }
-func RegisterProductHandlers(db *gorm.DB, r *gin.Engine) {
-	productRepo := product.NewProductRepository(db)
-	productService := product.NewService(*productRepo)
+func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
+	productService := product.NewService(*dbs.productRepository)
 	productController := productApi.NewProductController(*productService)
 	productGroup := r.Group("/product")
-	productGroup.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 	productGroup.GET("", productController.GetProducts)
 	productGroup.POST("", productController.CreateProduct)
 	productGroup.DELETE("", productController.DeleteProduct)
 	productGroup.PATCH("", productController.UpdateProduct)
+
+}
+
+func RegisterOrderHandlers(r *gin.Engine, dbs Databases) {
+	orderService := order.NewService(*dbs.orderRepository, *dbs.orderedItemRepository, *dbs.productRepository, *dbs.cartRepository, *dbs.cartItemRepository)
+	productController := orderApi.NewOrderController(orderService)
+	productGroup := r.Group("/order")
+	productGroup.POST("", productController.CompleteOrder)
 
 }
