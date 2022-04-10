@@ -10,7 +10,7 @@ type User struct {
 	Password  string `gorm:"type:varchar(100)"`
 	Password2 string `gorm:"-"`
 	Salt      string `gorm:"type:varchar(100)"`
-	Token     string `gorm:"type:varchar(100)"`
+	Token     string `gorm:"type:varchar(500)"`
 	IsDeleted bool
 	IsAdmin   bool
 }
