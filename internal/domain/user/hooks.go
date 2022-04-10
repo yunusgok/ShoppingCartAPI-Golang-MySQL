@@ -8,7 +8,7 @@ import (
 
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 
-	if u.Password != "" {
+	if u.Salt == "" {
 		//Create random string a salt to add to password
 		salt := hash.CreateSalt()
 		//create a hashed string from given password and created salt
