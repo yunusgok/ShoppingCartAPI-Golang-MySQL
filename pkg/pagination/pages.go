@@ -42,10 +42,10 @@ func New(page, pageSize, total int) *Pages {
 	pageCount := -1
 	if total >= 0 {
 		pageCount = (total + pageSize - 1) / pageSize
+		if page > pageCount {
+			page = pageCount
+		}
 
-	}
-	if page > pageCount {
-		page = pageCount
 	}
 	if page <= 0 {
 		page = 1
