@@ -26,8 +26,8 @@ func (r *Repository) Migration() {
 //TODO: create sample data from file
 func (r *Repository) InsertSampleData() {
 	categories := []Category{
-		{Name: "P1", Desc: "product1"},
-		{Name: "P2", Desc: "product1"},
+		{Name: "CAT1", Desc: "Category 1"},
+		{Name: "CAT2", Desc: "Category 2"},
 	}
 
 	for _, c := range categories {

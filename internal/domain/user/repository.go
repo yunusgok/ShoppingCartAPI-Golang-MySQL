@@ -38,7 +38,7 @@ func (r *Repository) GetByName(name string) (User, error) {
 }
 
 func (r *Repository) InsertSampleData() {
-	user := NewUser("adminUser", "adminUser", "adminUser")
+	user := NewUser("admin", "admin", "admin")
 	user.IsAdmin = true
 	r.db.Where(User{Username: user.Username}).Attrs(
 		User{
