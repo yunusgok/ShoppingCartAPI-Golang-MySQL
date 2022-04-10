@@ -18,12 +18,16 @@ func NewOrderController(orderService *order.Service) *Controller {
 	}
 }
 
+// CompleteOrder godoc
+// @Summary CompleteOrder with items in user's cart
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /cart [post]
 func (c *Controller) CompleteOrder(g *gin.Context) {
-	var req CompleteOrderRequest
-	if err := g.ShouldBind(&req); err != nil {
-		api_helper.HandleError(g, err)
-		return
-	}
 	userId := api_helper.GetUserId(g)
 
 	err := c.orderService.CompleteOrder(userId)
@@ -38,6 +42,16 @@ func (c *Controller) CompleteOrder(g *gin.Context) {
 		})
 }
 
+// CancelOrder godoc
+// @Summary CancelOrder of user with given order id
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Param CancelOrderRequest body CancelOrderRequest true "order information"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /order [delete]
 func (c *Controller) CancelOrder(g *gin.Context) {
 	var req CancelOrderRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -57,6 +71,15 @@ func (c *Controller) CancelOrder(g *gin.Context) {
 		})
 }
 
+// GetOrders godoc
+// @Summary GetOrders list of user's orders
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number"
+// @Param pageSize query int false "Page size"
+// @Success 200 {object} pagination.Pages
+// @Router /order [get]
 func (c *Controller) GetOrders(g *gin.Context) {
 	page := pagination.NewFromGinRequest(g, -1)
 	userId := api_helper.GetUserId(g)

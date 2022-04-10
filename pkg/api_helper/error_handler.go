@@ -8,8 +8,8 @@ import (
 func HandleError(g *gin.Context, err error) {
 
 	g.JSON(
-		http.StatusBadRequest, gin.H{
-			"error_message": err.Error(),
+		http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
 		})
 	g.Abort()
 	return

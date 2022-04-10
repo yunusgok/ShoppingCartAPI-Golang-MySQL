@@ -25,24 +25,25 @@ func NewUserController(service *user.Service, appConfig *config.Configuration) *
 	}
 }
 
+// CreateUser godoc
+// @Summary CreateUser to system with given username and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param CreateUserRequest body CreateUserRequest true "user information"
+// @Success 201 {object} CreateUserResponse
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /user [post]
 func (c *Controller) CreateUser(g *gin.Context) {
 	var req CreateUserRequest
 	if err := g.ShouldBind(&req); err != nil {
-		g.JSON(
-			http.StatusBadRequest, gin.H{
-				"error_message": "Check your request body.",
-			})
-		g.Abort()
+		api_helper.HandleError(g, api_helper.ErrInvalidBody)
 		return
 	}
 	newUser := user.NewUser(req.Username, req.Password, req.Password2)
 	err := c.userService.Create(newUser)
 	if err != nil {
-		g.JSON(
-			http.StatusBadRequest, gin.H{
-				"error_message": err.Error(),
-			})
-		g.Abort()
+		api_helper.HandleError(g, err)
 		return
 	}
 
@@ -52,20 +53,24 @@ func (c *Controller) CreateUser(g *gin.Context) {
 		})
 }
 
+// Login godoc
+// @Summary Login to system with given username and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param LoginRequest body LoginRequest true "user information"
+// @Success 200 {object} LoginResponse
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /user/login [post]
 func (c *Controller) Login(g *gin.Context) {
 	var req LoginRequest
 	if err := g.ShouldBind(&req); err != nil {
-		g.JSON(
-			http.StatusBadRequest, gin.H{
-				"error_message": "Check your request body.",
-			})
+		api_helper.HandleError(g, api_helper.ErrInvalidBody)
+
 	}
 	currentUser, err := c.userService.GetUser(req.Username, req.Password)
 	if err != nil {
-		g.JSON(
-			http.StatusNotFound, gin.H{
-				"error_message": err.Error(),
-			})
+		api_helper.HandleError(g, err)
 		return
 	}
 	decodedClaims := jwtHelper.VerifyToken(currentUser.Token, c.appConfig.SecretKey)

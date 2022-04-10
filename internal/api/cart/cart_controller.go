@@ -17,6 +17,16 @@ func NewCartController(service *cart.Service) *Controller {
 	}
 }
 
+// AddItem godoc
+// @Summary AddItem add product with given amount to cart of user
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Param ItemCartRequest body ItemCartRequest true "product information"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /cart [post]
 func (c *Controller) AddItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -32,10 +42,20 @@ func (c *Controller) AddItem(g *gin.Context) {
 
 	g.JSON(
 		http.StatusCreated, CreateCategoryResponse{
-			Message: "created",
+			Message: "Item added to cart",
 		})
 }
 
+// UpdateItem godoc
+// @Summary UpdateItem in cart of the user
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Param ItemCartRequest body ItemCartRequest true "product information"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /cart [patch]
 func (c *Controller) UpdateItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -56,10 +76,19 @@ func (c *Controller) UpdateItem(g *gin.Context) {
 		})
 }
 
+// GetCart godoc
+// @Summary GetCart list ot items in user's cart
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Success 200 {array} cart.Item
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /cart [get]
 func (c *Controller) GetCart(g *gin.Context) {
 	userId := api_helper.GetUserId(g)
 
-	result, err := c.cartService.GetCartItems(uint(userId))
+	result, err := c.cartService.GetCartItems(userId)
 	if err != nil {
 		api_helper.HandleError(g, err)
 		return

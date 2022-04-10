@@ -18,6 +18,16 @@ func NewProductController(service product.Service) *Controller {
 	}
 }
 
+// GetProducts godoc
+// @Summary GetProducts list products in pages
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param qt query string false "Search text to find matched sku numbers and names"
+// @Param page query int false "Page number"
+// @Param pageSize query int false "Page size"
+// @Success 200 {object} pagination.Pages
+// @Router /product [get]
 func (c *Controller) GetProducts(g *gin.Context) {
 	page := pagination.NewFromGinRequest(g, -1)
 	queryText := g.Query("qt")
@@ -31,6 +41,16 @@ func (c *Controller) GetProducts(g *gin.Context) {
 
 }
 
+// CreateProduct godoc
+// @Summary CreateProduct with given fields
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param CreateProductRequest body CreateProductRequest true "product information"
+// @Param Authorization  header    string  true  "Authentication header"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /product [post]
 func (c *Controller) CreateProduct(g *gin.Context) {
 	var req CreateProductRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -45,11 +65,21 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 	}
 
 	g.JSON(
-		http.StatusCreated, CreateProductResponse{
-			Message: "product created",
+		http.StatusCreated, api_helper.Response{
+			Message: "Product Created",
 		})
 }
 
+// DeleteProduct godoc
+// @Summary DeleteProduct determined by sku
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param DeleteProductRequest body DeleteProductRequest true "sku of product"
+// @Param Authorization header    string  true  "Authentication header"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /product [delete]
 func (c *Controller) DeleteProduct(g *gin.Context) {
 	var req DeleteProductRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -64,11 +94,21 @@ func (c *Controller) DeleteProduct(g *gin.Context) {
 	}
 
 	g.JSON(
-		http.StatusCreated, CreateProductResponse{
+		http.StatusOK, api_helper.Response{
 			Message: "Product Deleted",
 		})
 }
 
+// UpdateProduct godoc
+// @Summary UpdateProduct determined by sku with given field
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param UpdateProductRequest body UpdateProductRequest true "product information"
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Success 200 {object} CreateProductResponse
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /product [patch]
 func (c *Controller) UpdateProduct(g *gin.Context) {
 	var req UpdateProductRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -83,7 +123,7 @@ func (c *Controller) UpdateProduct(g *gin.Context) {
 	}
 
 	g.JSON(
-		http.StatusCreated, CreateProductResponse{
+		http.StatusOK, CreateProductResponse{
 			Message: "Product Updated",
 		})
 }

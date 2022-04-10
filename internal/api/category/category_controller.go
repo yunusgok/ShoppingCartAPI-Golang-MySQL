@@ -19,7 +19,16 @@ func NewCategoryController(service *category.Service) *Controller {
 	}
 }
 
-//TODO: add swagger
+// CreateCategory godoc
+// @Summary CreateCategory create categories with given parameters
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Param CreateCategoryRequest body CreateCategoryRequest true "category information"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /category [post]
 func (c *Controller) CreateCategory(g *gin.Context) {
 	var req CreateCategoryRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -34,11 +43,19 @@ func (c *Controller) CreateCategory(g *gin.Context) {
 	}
 
 	g.JSON(
-		http.StatusCreated, CreateCategoryResponse{
-			Name: newCategory.Name,
-			Desc: newCategory.Desc,
-		})
+		http.StatusCreated, api_helper.Response{Message: "Category created"})
 }
+
+// BulkCreateCategory godoc
+// @Summary BulkCreateCategory create categories given in csv file
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
+// @Param   file formData file true  "file contains category information"
+// @Success 200 {object} api_helper.Response
+// @Failure 400  {object} api_helper.ErrorResponse
+// @Router /category/upload [post]
 func (c *Controller) BulkCreateCategory(g *gin.Context) {
 	fileHeader, err := g.FormFile("file")
 	if err != nil {
@@ -50,9 +67,21 @@ func (c *Controller) BulkCreateCategory(g *gin.Context) {
 		api_helper.HandleError(g, err)
 		return
 	}
-	g.String(http.StatusOK, fmt.Sprintf("'%s' uploaded! '%d' new categories created", fileHeader.Filename, count))
+	g.JSON(
+		http.StatusOK, api_helper.Response{
+			Message: fmt.Sprintf(
+				"'%s' uploaded! '%d' new categories created", fileHeader.Filename, count)})
 }
 
+// GetCategories godoc
+// @Summary GetCategories list categories
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number"
+// @Param pageSize query int false "Page size"
+// @Success 200 {object} pagination.Pages
+// @Router /category [get]
 func (c *Controller) GetCategories(g *gin.Context) {
 	page := pagination.NewFromGinRequest(g, -1)
 	page = c.categoryService.GetAll(page)

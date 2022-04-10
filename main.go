@@ -10,15 +10,23 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Cart Service API
+// @description Cart service api provides user shopping info and operations
+// @version 1.0
+// @contact.name ynsmrgok
+// @contact.url https://github.com/yunusgok
+
+// @host localhost:8080
+// @BasePath /
 func main() {
 	r := gin.Default()
 	registerMiddlewares(r)
 	api.RegisterHandlers(r)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,
@@ -36,18 +44,21 @@ func main() {
 
 // registerMiddlewares adds request logger middlewares to server endpoints
 func registerMiddlewares(r *gin.Engine) {
-	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		// your custom format
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s %s\"\n",
-			param.ClientIP,
-			param.TimeStamp.Format(time.RFC3339),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCode,
-			param.Latency,
-			param.ErrorMessage,
-		)
-	}))
+	r.Use(
+		gin.LoggerWithFormatter(
+			func(param gin.LogFormatterParams) string {
+				// your custom format
+				return fmt.Sprintf(
+					"%s - [%s] \"%s %s %s %d %s %s\"\n",
+					param.ClientIP,
+					param.TimeStamp.Format(time.RFC3339),
+					param.Method,
+					param.Path,
+					param.Request.Proto,
+					param.StatusCode,
+					param.Latency,
+					param.ErrorMessage,
+				)
+			}))
 	r.Use(gin.Recovery())
 }

@@ -98,7 +98,7 @@ func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 	productService := product.NewService(*dbs.productRepository)
 	productController := productApi.NewProductController(*productService)
 	productGroup := r.Group("/product")
-	productGroup.GET("", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.GetProducts)
+	productGroup.GET("", productController.GetProducts)
 	productGroup.POST(
 		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), productController.CreateProduct)
 	productGroup.DELETE(
