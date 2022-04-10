@@ -20,7 +20,13 @@ func NewProductController(service product.Service) *Controller {
 
 func (c *Controller) GetProducts(g *gin.Context) {
 	page := pagination.NewFromGinRequest(g, -1)
-	page = c.productService.GetAll(page)
+	queryText := g.Query("qt")
+	if queryText != "" {
+		page = c.productService.SearchProduct(queryText, page)
+	} else {
+		page = c.productService.GetAll(page)
+
+	}
 	g.JSON(http.StatusOK, page)
 
 }
@@ -38,9 +44,10 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 		return
 	}
 
-	g.JSON(http.StatusCreated, CreateProductResponse{
-		Message: "product created",
-	})
+	g.JSON(
+		http.StatusCreated, CreateProductResponse{
+			Message: "product created",
+		})
 }
 
 func (c *Controller) DeleteProduct(g *gin.Context) {
@@ -56,9 +63,10 @@ func (c *Controller) DeleteProduct(g *gin.Context) {
 		return
 	}
 
-	g.JSON(http.StatusCreated, CreateProductResponse{
-		Message: "Product Deleted",
-	})
+	g.JSON(
+		http.StatusCreated, CreateProductResponse{
+			Message: "Product Deleted",
+		})
 }
 
 func (c *Controller) UpdateProduct(g *gin.Context) {
@@ -74,7 +82,8 @@ func (c *Controller) UpdateProduct(g *gin.Context) {
 		return
 	}
 
-	g.JSON(http.StatusCreated, CreateProductResponse{
-		Message: "Product Updated",
-	})
+	g.JSON(
+		http.StatusCreated, CreateProductResponse{
+			Message: "Product Updated",
+		})
 }

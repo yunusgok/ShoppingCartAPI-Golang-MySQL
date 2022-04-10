@@ -38,3 +38,10 @@ func (c *Service) UpdateProduct(product *Product) error {
 	err := c.productRepository.Update(*product)
 	return err
 }
+
+func (c *Service) SearchProduct(text string, page *pagination.Pages) *pagination.Pages {
+	products, count := c.productRepository.SearchByString(text, page.Page, page.PageSize)
+	page.Items = products
+	page.TotalCount = count
+	return page
+}
