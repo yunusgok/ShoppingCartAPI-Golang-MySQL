@@ -38,14 +38,18 @@ func (r *Repository) GetByName(name string) (User, error) {
 }
 
 func (r *Repository) InsertSampleData() {
-	user := NewUser("adminUser", "adminUser")
+	user := NewUser("adminUser", "adminUser", "adminUser")
 	user.IsAdmin = true
 	r.db.Where(User{Username: user.Username}).Attrs(
 		User{
 			Username: user.Username, Password: user.Password}).FirstOrCreate(&user)
-	user = NewUser("user", "user")
+	user = NewUser("user", "user", "user")
 	r.db.Where(User{Username: user.Username}).Attrs(
 		User{
 			Username: user.Username, Password: user.Password}).FirstOrCreate(&user)
 
+}
+
+func (r *Repository) Update(u *User) error {
+	return r.db.Save(&u).Error
 }

@@ -14,13 +14,20 @@ func NewUserService(r Repository) *Service {
 	}
 }
 
-//TODO: add validation middleware
 func (c *Service) Create(user *User) error {
+	if user.Password != user.Password2 {
+		return ErrMismatchedPasswords
+	}
 	_, err := c.r.GetByName(user.Username)
 	if err == nil {
 		return ErrUserExistWithName
 	}
-
+	if ValidateUserName(user.Username) {
+		return ErrInvalidUsername
+	}
+	if ValidatePassword(user.Password) {
+		return ErrInvalidPassword
+	}
 	err = c.r.Create(user)
 	return err
 }
@@ -35,4 +42,7 @@ func (c *Service) GetUser(username string, password string) (User, error) {
 		return User{}, ErrUserNotFound
 	}
 	return user, nil
+}
+func (c *Service) UpdateUser(user *User) error {
+	return c.r.Update(user)
 }
