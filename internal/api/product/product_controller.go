@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"picnshop/internal/domain/product"
+	"picnshop/pkg/api_helper"
 	"picnshop/pkg/pagination"
-	"picnshop/pkg/response"
 )
 
 type Controller struct {
@@ -34,13 +34,13 @@ func (c *Controller) GetProducts(g *gin.Context) {
 func (c *Controller) CreateProduct(g *gin.Context) {
 	var req CreateProductRequest
 	if err := g.ShouldBind(&req); err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
 	err := c.productService.CreateProduct(req.Name, req.Desc, req.Count, req.Price, req.CategoryID)
 	if err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
@@ -53,13 +53,13 @@ func (c *Controller) CreateProduct(g *gin.Context) {
 func (c *Controller) DeleteProduct(g *gin.Context) {
 	var req DeleteProductRequest
 	if err := g.ShouldBind(&req); err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
 	err := c.productService.DeleteProduct(req.SKU)
 	if err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
@@ -72,13 +72,13 @@ func (c *Controller) DeleteProduct(g *gin.Context) {
 func (c *Controller) UpdateProduct(g *gin.Context) {
 	var req UpdateProductRequest
 	if err := g.ShouldBind(&req); err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
 	err := c.productService.UpdateProduct(req.ToProduct())
 	if err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 

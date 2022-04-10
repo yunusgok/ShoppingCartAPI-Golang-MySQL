@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"picnshop/internal/domain/category"
+	"picnshop/pkg/api_helper"
 	"picnshop/pkg/pagination"
-	"picnshop/pkg/response"
 )
 
 type Controller struct {
@@ -23,26 +23,27 @@ func NewCategoryController(service *category.Service) *Controller {
 func (c *Controller) CreateCategory(g *gin.Context) {
 	var req CreateCategoryRequest
 	if err := g.ShouldBind(&req); err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 	newCategory := category.NewCategory(req.Name, req.Desc)
 	err := c.categoryService.Create(newCategory)
 	if err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 
-	g.JSON(http.StatusCreated, CreateCategoryResponse{
-		Name: newCategory.Name,
-		Desc: newCategory.Desc,
-	})
+	g.JSON(
+		http.StatusCreated, CreateCategoryResponse{
+			Name: newCategory.Name,
+			Desc: newCategory.Desc,
+		})
 }
 func (c *Controller) BulkCreateCategory(g *gin.Context) {
 	fileHeader, _ := g.FormFile("file")
 	count, err := c.categoryService.BulkCreate(fileHeader)
 	if err != nil {
-		response.HandleError(g, err)
+		api_helper.HandleError(g, err)
 		return
 	}
 	g.String(http.StatusOK, fmt.Sprintf("'%s' uploaded! '%d' new categories created", fileHeader.Filename, count))

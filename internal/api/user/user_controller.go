@@ -7,6 +7,7 @@ import (
 	"os"
 	"picnshop/internal/domain/user"
 	jwtHelper "picnshop/pkg/jwt"
+	"strconv"
 	"time"
 )
 
@@ -26,50 +27,57 @@ func NewUserController(service *user.Service) *Controller {
 func (c *Controller) CreateUser(g *gin.Context) {
 	var req CreateUserRequest
 	if err := g.ShouldBind(&req); err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{
-			"error_message": "Check your request body.",
-		})
+		g.JSON(
+			http.StatusBadRequest, gin.H{
+				"error_message": "Check your request body.",
+			})
 		g.Abort()
 		return
 	}
 	newUser := user.NewUser(req.Username, req.Password)
 	err := c.userService.Create(newUser)
 	if err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{
-			"error_message": err.Error(),
-		})
+		g.JSON(
+			http.StatusBadRequest, gin.H{
+				"error_message": err.Error(),
+			})
 		g.Abort()
 		return
 	}
 
-	g.JSON(http.StatusCreated, CreateUserResponse{
-		Username: req.Username,
-	})
+	g.JSON(
+		http.StatusCreated, CreateUserResponse{
+			Username: req.Username,
+		})
 }
 
 func (c *Controller) Login(g *gin.Context) {
 	var req LoginRequest
 	if err := g.ShouldBind(&req); err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{
-			"error_message": "Check your request body.",
-		})
+		g.JSON(
+			http.StatusBadRequest, gin.H{
+				"error_message": "Check your request body.",
+			})
 	}
 	currentUser, err := c.userService.GetUser(req.Username, req.Password)
 	if err != nil {
-		g.JSON(http.StatusNotFound, gin.H{
-			"error_message": err.Error(),
-		})
+		g.JSON(
+			http.StatusNotFound, gin.H{
+				"error_message": err.Error(),
+			})
 		return
 	}
-	jwtClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId":   currentUser.ID,
-		"username": currentUser.Username,
-		"iat":      time.Now().Unix(),
-		"iss":      os.Getenv("ENV"),
-		"exp": time.Now().Add(24 *
-			time.Hour).Unix(),
-		//"roles": user.Roles,
-	})
+	jwtClaims := jwt.NewWithClaims(
+		jwt.SigningMethodHS256, jwt.MapClaims{
+			"userId":   strconv.FormatInt(int64(currentUser.ID), 10),
+			"username": currentUser.Username,
+			"iat":      time.Now().Unix(),
+			"iss":      os.Getenv("ENV"),
+			"exp": time.Now().Add(
+				24 *
+					time.Hour).Unix(),
+			"isAdmin": currentUser.IsAdmin,
+		})
 	//TODO: get secret from config
 	//TODO: update user
 	token := jwtHelper.GenerateToken(jwtClaims, secret)

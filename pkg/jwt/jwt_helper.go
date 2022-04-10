@@ -13,6 +13,7 @@ type DecodedToken struct {
 	UserId   string `json:"userId"`
 	Username string `json:"username"`
 	Iss      string `json:"iss"`
+	IsAdmin  bool   `json:"isAdmin"`
 }
 
 func GenerateToken(claims *jwt.Token, secret string) (token string) {
@@ -28,9 +29,10 @@ func VerifyToken(token string, secret string, env string) *DecodedToken {
 	hmacSecretString := secret
 	hmacSecret := []byte(hmacSecretString)
 
-	decoded, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return hmacSecret, nil
-	})
+	decoded, err := jwt.Parse(
+		token, func(token *jwt.Token) (interface{}, error) {
+			return hmacSecret, nil
+		})
 
 	if err != nil {
 		return nil

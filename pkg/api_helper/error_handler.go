@@ -1,4 +1,4 @@
-package response
+package api_helper
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,9 +7,10 @@ import (
 
 func HandleError(g *gin.Context, err error) {
 
-	g.JSON(http.StatusBadRequest, gin.H{
-		"error_message": err.Error(),
-	})
+	g.JSON(
+		http.StatusBadRequest, gin.H{
+			"error_message": err.Error(),
+		})
 	g.Abort()
 	return
 

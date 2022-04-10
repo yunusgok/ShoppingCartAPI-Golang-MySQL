@@ -6,12 +6,12 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"type:varchar(30)"`
-	Password string `gorm:"type:varchar(100)"`
-	Salt     string `gorm:"type:varchar(100)"`
-	Token    string `gorm:"type:varchar(100)"`
-	//TODO add roles
+	Username  string `gorm:"type:varchar(30)"`
+	Password  string `gorm:"type:varchar(100)"`
+	Salt      string `gorm:"type:varchar(100)"`
+	Token     string `gorm:"type:varchar(100)"`
 	IsDeleted bool
+	IsAdmin   bool
 }
 
 func NewUser(username string, password string) *User {
@@ -20,5 +20,6 @@ func NewUser(username string, password string) *User {
 		Username:  username,
 		Password:  password,
 		IsDeleted: false,
+		IsAdmin:   false,
 	}
 }
