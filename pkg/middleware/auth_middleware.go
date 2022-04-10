@@ -3,14 +3,13 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"os"
 	jwtHelper "picnshop/pkg/jwt"
 )
 
 func AuthAdminMiddleware(secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.GetHeader("Authorization") != "" {
-			decodedClaims := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey, os.Getenv("ENV"))
+			decodedClaims := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey)
 			if decodedClaims != nil && decodedClaims.IsAdmin {
 				c.Next()
 				c.Abort()
@@ -31,7 +30,7 @@ func AuthAdminMiddleware(secretKey string) gin.HandlerFunc {
 func AuthUserMiddleware(secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.GetHeader("Authorization") != "" {
-			decodedClaims := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey, os.Getenv("ENV"))
+			decodedClaims := jwtHelper.VerifyToken(c.GetHeader("Authorization"), secretKey)
 			if decodedClaims != nil {
 				c.Set("userId", decodedClaims.UserId)
 				c.Next()

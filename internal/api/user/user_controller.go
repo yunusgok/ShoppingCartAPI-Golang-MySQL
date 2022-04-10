@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"picnshop/internal/config"
 	"picnshop/internal/domain/user"
 	jwtHelper "picnshop/pkg/jwt"
 	"strconv"
@@ -13,13 +14,13 @@ import (
 
 type Controller struct {
 	userService *user.Service
+	appConfig   *config.Configuration
 }
 
-var secret = "secret"
-
-func NewUserController(service *user.Service) *Controller {
+func NewUserController(service *user.Service, appConfig *config.Configuration) *Controller {
 	return &Controller{
 		userService: service,
+		appConfig:   appConfig,
 	}
 }
 
@@ -78,16 +79,15 @@ func (c *Controller) Login(g *gin.Context) {
 					time.Hour).Unix(),
 			"isAdmin": currentUser.IsAdmin,
 		})
-	//TODO: get secret from config
 	//TODO: update user
-	token := jwtHelper.GenerateToken(jwtClaims, secret)
+	token := jwtHelper.GenerateToken(jwtClaims, c.appConfig.SecretKey)
 
 	g.JSON(http.StatusOK, token)
 }
 
 func (c *Controller) VerifyToken(g *gin.Context) {
 	token := g.GetHeader("Authorization")
-	decodedClaims := jwtHelper.VerifyToken(token, secret, os.Getenv("ENV"))
+	decodedClaims := jwtHelper.VerifyToken(token, c.appConfig.SecretKey)
 
 	g.JSON(http.StatusOK, decodedClaims)
 

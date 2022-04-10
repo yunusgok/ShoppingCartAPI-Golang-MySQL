@@ -1,11 +1,13 @@
 package api
 
 import (
+	"log"
 	cartApi "picnshop/internal/api/cart"
 	categoryApi "picnshop/internal/api/category"
 	orderApi "picnshop/internal/api/order"
 	productApi "picnshop/internal/api/product"
 	userApi "picnshop/internal/api/user"
+	"picnshop/internal/config"
 	"picnshop/pkg/middleware"
 
 	"picnshop/internal/domain/cart"
@@ -29,11 +31,16 @@ type Databases struct {
 	orderedItemRepository *order.OrderedItemRepository
 }
 
-var secret = "secret"
+var AppConfig = &config.Configuration{}
 
 func CreateDBs() *Databases {
+	cfgFile := "./config/cart.yaml"
+	AppConfig, err := config.GetAllConfigValues(cfgFile)
+	if err != nil {
+		log.Fatalf("Failed to read config file. %v", err.Error())
+	}
 	//TODO get settings from config
-	db := database_handler.NewMySQLDB("go_test:password@tcp(127.0.0.1:3306)/go_database?parseTime=True&loc=Local")
+	db := database_handler.NewMySQLDB(AppConfig.DatabaseSettings.DatabaseURI)
 	return &Databases{
 		categoryRepository:    category.NewCategoryRepository(db),
 		cartRepository:        cart.NewCartRepository(db),
@@ -44,7 +51,9 @@ func CreateDBs() *Databases {
 		orderedItemRepository: order.NewOrderedItemRepository(db),
 	}
 }
+
 func RegisterHandlers(r *gin.Engine) {
+
 	dbs := *CreateDBs()
 	RegisterUserHandlers(r, dbs)
 	RegisterCategoryHandlers(r, dbs)
@@ -57,14 +66,17 @@ func RegisterCategoryHandlers(r *gin.Engine, dbs Databases) {
 	categoryService := category.NewCategoryService(*dbs.categoryRepository)
 	categoryController := categoryApi.NewCategoryController(categoryService)
 	categoryGroup := r.Group("/category")
-	categoryGroup.POST("", middleware.AuthAdminMiddleware(secret), categoryController.CreateCategory)
+	categoryGroup.POST(
+		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), categoryController.CreateCategory)
 	categoryGroup.GET("", categoryController.GetCategories)
-	categoryGroup.POST("/upload", middleware.AuthAdminMiddleware(secret), categoryController.BulkCreateCategory)
+	categoryGroup.POST(
+		"/upload", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey),
+		categoryController.BulkCreateCategory)
 }
 
 func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
 	userService := user.NewUserService(*dbs.userRepository)
-	userController := userApi.NewUserController(userService)
+	userController := userApi.NewUserController(userService, AppConfig)
 	userGroup := r.Group("/user")
 	userGroup.POST("", userController.CreateUser)
 	userGroup.POST("/login", userController.Login)
@@ -74,7 +86,7 @@ func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
 func RegisterCartHandlers(r *gin.Engine, dbs Databases) {
 	cartService := cart.NewService(*dbs.cartRepository, *dbs.cartItemRepository, *dbs.productRepository)
 	cartController := cartApi.NewCartController(cartService)
-	cartGroup := r.Group("/cart", middleware.AuthUserMiddleware(secret))
+	cartGroup := r.Group("/cart", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey))
 	cartGroup.POST("/item", cartController.AddItem)
 	cartGroup.PATCH("/item", cartController.UpdateItem)
 	cartGroup.GET("/", cartController.GetCart)
@@ -83,10 +95,13 @@ func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 	productService := product.NewService(*dbs.productRepository)
 	productController := productApi.NewProductController(*productService)
 	productGroup := r.Group("/product")
-	productGroup.GET("", middleware.AuthUserMiddleware(secret), productController.GetProducts)
-	productGroup.POST("", middleware.AuthAdminMiddleware(secret), productController.CreateProduct)
-	productGroup.DELETE("", middleware.AuthUserMiddleware(secret), productController.DeleteProduct)
-	productGroup.PATCH("", middleware.AuthUserMiddleware(secret), productController.UpdateProduct)
+	productGroup.GET("", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.GetProducts)
+	productGroup.POST(
+		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), productController.CreateProduct)
+	productGroup.DELETE(
+		"", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.DeleteProduct)
+	productGroup.PATCH(
+		"", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.UpdateProduct)
 
 }
 
@@ -95,7 +110,7 @@ func RegisterOrderHandlers(r *gin.Engine, dbs Databases) {
 		*dbs.orderRepository, *dbs.orderedItemRepository, *dbs.productRepository, *dbs.cartRepository,
 		*dbs.cartItemRepository)
 	productController := orderApi.NewOrderController(orderService)
-	orderGroup := r.Group("/order", middleware.AuthUserMiddleware(secret))
+	orderGroup := r.Group("/order", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey))
 	orderGroup.POST("", productController.CompleteOrder)
 	orderGroup.DELETE("", productController.CancelOrder)
 	orderGroup.GET("", productController.GetOrders)
