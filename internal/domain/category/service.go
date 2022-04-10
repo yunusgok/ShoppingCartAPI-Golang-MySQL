@@ -42,8 +42,11 @@ func (c *Service) BulkCreate(fileHeader *multipart.FileHeader) (int, error) {
 	for _, categoryVariables := range bulkCategory {
 		categories = append(categories, NewCategory(categoryVariables[0], categoryVariables[1]))
 	}
-	c.r.BulkCreate(categories)
-	return len(categories), nil
+	count, err := c.r.BulkCreate(categories)
+	if err != nil {
+		return count, err
+	}
+	return count, nil
 }
 
 // GetAll return all categories in given pageIndex and pageSize

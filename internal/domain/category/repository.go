@@ -54,10 +54,10 @@ func (r *Repository) GetByName(name string) []Category {
 }
 
 // BulkCreate creates categories given in parameter
-func (r *Repository) BulkCreate(categories []*Category) {
-
-	r.db.FirstOrCreate(&categories)
-
+func (r *Repository) BulkCreate(categories []*Category) (int, error) {
+	var count int64
+	err := r.db.Create(&categories).Count(&count).Error
+	return int(count), err
 }
 
 // GetAll return all categories in given pageIndex and pageSize
