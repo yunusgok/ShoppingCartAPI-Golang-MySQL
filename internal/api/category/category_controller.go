@@ -40,7 +40,11 @@ func (c *Controller) CreateCategory(g *gin.Context) {
 		})
 }
 func (c *Controller) BulkCreateCategory(g *gin.Context) {
-	fileHeader, _ := g.FormFile("file")
+	fileHeader, err := g.FormFile("file")
+	if err != nil {
+		api_helper.HandleError(g, err)
+		return
+	}
 	count, err := c.categoryService.BulkCreate(fileHeader)
 	if err != nil {
 		api_helper.HandleError(g, err)
