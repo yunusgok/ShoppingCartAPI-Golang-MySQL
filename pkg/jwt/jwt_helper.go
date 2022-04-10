@@ -24,7 +24,6 @@ func GenerateToken(claims *jwt.Token, secret string) (token string) {
 	return
 }
 
-// TODO env token will passed
 func VerifyToken(token string, secret string) *DecodedToken {
 	hmacSecretString := secret
 	hmacSecret := []byte(hmacSecretString)

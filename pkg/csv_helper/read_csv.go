@@ -7,7 +7,6 @@ import (
 	"mime/multipart"
 )
 
-//TODO: refactor
 func ReadCsv(fileHeader *multipart.FileHeader) ([][]string, error) {
 	f, err := fileHeader.Open()
 	if err != nil {
