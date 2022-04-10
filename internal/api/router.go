@@ -88,9 +88,13 @@ func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 }
 
 func RegisterOrderHandlers(r *gin.Engine, dbs Databases) {
-	orderService := order.NewService(*dbs.orderRepository, *dbs.orderedItemRepository, *dbs.productRepository, *dbs.cartRepository, *dbs.cartItemRepository)
+	orderService := order.NewService(
+		*dbs.orderRepository, *dbs.orderedItemRepository, *dbs.productRepository, *dbs.cartRepository,
+		*dbs.cartItemRepository)
 	productController := orderApi.NewOrderController(orderService)
 	productGroup := r.Group("/order")
 	productGroup.POST("", productController.CompleteOrder)
+	productGroup.DELETE("", productController.CancelOrder)
+	productGroup.GET("", productController.GetOrders)
 
 }

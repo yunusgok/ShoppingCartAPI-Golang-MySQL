@@ -9,17 +9,18 @@ import (
 type Order struct {
 	gorm.Model
 	UserID       uint
-	User         user.User     `gorm:"foreignKey:ID;references:UserID"`
+	User         user.User     `gorm:"foreignKey:ID;references:UserID" json:"-"`
 	OrderedItems []OrderedItem `gorm:"foreignKey:OrderID"`
 	TotalPrice   float32
 	IsCanceled   bool
 }
 type OrderedItem struct {
 	gorm.Model
-	Product   product.Product `gorm:"foreignKey:ProductID"`
-	ProductID uint
-	Count     int
-	OrderID   uint
+	Product    product.Product `gorm:"foreignKey:ProductID"`
+	ProductID  uint
+	Count      int
+	OrderID    uint
+	IsCanceled bool
 }
 
 func NewOrder(uid uint, items []OrderedItem) *Order {
@@ -37,7 +38,8 @@ func NewOrder(uid uint, items []OrderedItem) *Order {
 
 func NewOrderedItem(count int, pid uint) *OrderedItem {
 	return &OrderedItem{
-		Count:     count,
-		ProductID: pid,
+		Count:      count,
+		ProductID:  pid,
+		IsCanceled: false,
 	}
 }
