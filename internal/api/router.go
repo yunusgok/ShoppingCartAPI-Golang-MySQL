@@ -35,11 +35,14 @@ var AppConfig = &config.Configuration{}
 
 func CreateDBs() *Databases {
 	cfgFile := "./config/cart.yaml"
-	AppConfig, err := config.GetAllConfigValues(cfgFile)
+	conf, err := config.GetAllConfigValues(cfgFile)
+	AppConfig = conf
+	if err != nil {
+		return nil
+	}
 	if err != nil {
 		log.Fatalf("Failed to read config file. %v", err.Error())
 	}
-	//TODO get settings from config
 	db := database_handler.NewMySQLDB(AppConfig.DatabaseSettings.DatabaseURI)
 	return &Databases{
 		categoryRepository:    category.NewCategoryRepository(db),
