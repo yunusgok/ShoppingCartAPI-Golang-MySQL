@@ -14,6 +14,11 @@ func NewUserService(r Repository) *Service {
 	}
 }
 
+// Create a user to db with given object
+// if password does not match,
+// if username already exist,
+// if username and password is not valid,
+// user will not be created
 func (c *Service) Create(user *User) error {
 	if user.Password != user.Password2 {
 		return ErrMismatchedPasswords
@@ -32,6 +37,7 @@ func (c *Service) Create(user *User) error {
 	return err
 }
 
+// GetUser if user exist and password matches with given one
 func (c *Service) GetUser(username string, password string) (User, error) {
 	user, err := c.r.GetByName(username)
 	if err != nil {

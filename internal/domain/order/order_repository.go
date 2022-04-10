@@ -51,6 +51,7 @@ func (r *Repository) Create(ci *Order) error {
 	return nil
 }
 
+// GetAll return all Orders of the user in given pageIndex and pageSize
 func (r *Repository) GetAll(pageIndex, pageSize int, uid uint) ([]Order, int) {
 	var orders []Order
 	var count int64

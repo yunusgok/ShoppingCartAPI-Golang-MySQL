@@ -34,6 +34,8 @@ func (r *Repository) Update(cart Cart) error {
 	return nil
 }
 
+// FindOrCreateByUserID returns if the cart of the user if exists
+// When cart not exist, it creates a new one
 func (r *Repository) FindOrCreateByUserID(userId uint) (*Cart, error) {
 	var cart *Cart
 	err := r.db.Where(Cart{UserID: userId}).Attrs(NewCart(userId)).FirstOrCreate(&cart).Error
@@ -43,6 +45,7 @@ func (r *Repository) FindOrCreateByUserID(userId uint) (*Cart, error) {
 	return cart, nil
 }
 
+// FindByUserID returns cart of the user
 func (r *Repository) FindByUserID(userId uint) (*Cart, error) {
 	var cart *Cart
 	err := r.db.Where(Cart{UserID: userId}).Attrs(NewCart(userId)).First(&cart).Error
@@ -79,6 +82,7 @@ func (r *ItemRepository) Update(item Item) error {
 	return nil
 }
 
+// FindByID returns Item with given pid(productId) and cid(cartId)
 func (r *ItemRepository) FindByID(pid uint, cid uint) (*Item, error) {
 	var item *Item
 
@@ -99,6 +103,7 @@ func (r *ItemRepository) Create(ci *Item) error {
 	return nil
 }
 
+// GetItems return items in cart
 func (r *ItemRepository) GetItems(cartId uint) ([]Item, error) {
 	var cartItems []Item
 	err := r.db.Where(&Item{CartID: cartId}).Find(&cartItems).Error

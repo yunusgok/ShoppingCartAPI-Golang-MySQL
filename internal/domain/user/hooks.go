@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// BeforeSave of User if password is not hashed it will be hashed and saved wth its salt
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {
 
 	if u.Salt == "" {

@@ -21,6 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Databases holds application db objects for creation of services using these databases
 type Databases struct {
 	categoryRepository    *category.Repository
 	userRepository        *user.Repository
@@ -33,6 +34,9 @@ type Databases struct {
 
 var AppConfig = &config.Configuration{}
 
+// CreateDBs creates connection to mysql database with config and
+// creates databases for services with created connection.
+// returns Databases object
 func CreateDBs() *Databases {
 	cfgFile := "./config/cart.yaml"
 	conf, err := config.GetAllConfigValues(cfgFile)
@@ -55,6 +59,7 @@ func CreateDBs() *Databases {
 	}
 }
 
+// RegisterHandlers registers all internal handlers
 func RegisterHandlers(r *gin.Engine) {
 
 	dbs := *CreateDBs()
@@ -65,6 +70,7 @@ func RegisterHandlers(r *gin.Engine) {
 	RegisterOrderHandlers(r, dbs)
 }
 
+// RegisterCategoryHandlers creates /category relative path and registers category related handlers to the path
 func RegisterCategoryHandlers(r *gin.Engine, dbs Databases) {
 	categoryService := category.NewCategoryService(*dbs.categoryRepository)
 	categoryController := categoryApi.NewCategoryController(categoryService)
@@ -77,6 +83,7 @@ func RegisterCategoryHandlers(r *gin.Engine, dbs Databases) {
 		categoryController.BulkCreateCategory)
 }
 
+// RegisterUserHandlers creates /user relative path and registers user related handlers to the path
 func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
 	userService := user.NewUserService(*dbs.userRepository)
 	userController := userApi.NewUserController(userService, AppConfig)
@@ -86,6 +93,7 @@ func RegisterUserHandlers(r *gin.Engine, dbs Databases) {
 
 }
 
+// RegisterCartHandlers creates /cart relative path and registers cart related handlers to the path
 func RegisterCartHandlers(r *gin.Engine, dbs Databases) {
 	cartService := cart.NewService(*dbs.cartRepository, *dbs.cartItemRepository, *dbs.productRepository)
 	cartController := cartApi.NewCartController(cartService)
@@ -94,6 +102,8 @@ func RegisterCartHandlers(r *gin.Engine, dbs Databases) {
 	cartGroup.PATCH("/item", cartController.UpdateItem)
 	cartGroup.GET("/", cartController.GetCart)
 }
+
+// RegisterProductHandlers creates /product relative path and registers product related handlers to the path
 func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 	productService := product.NewService(*dbs.productRepository)
 	productController := productApi.NewProductController(*productService)
@@ -108,6 +118,7 @@ func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 
 }
 
+// RegisterOrderHandlers creates /order relative path and registers order related handlers to the path
 func RegisterOrderHandlers(r *gin.Engine, dbs Databases) {
 	orderService := order.NewService(
 		*dbs.orderRepository, *dbs.orderedItemRepository, *dbs.productRepository, *dbs.cartRepository,

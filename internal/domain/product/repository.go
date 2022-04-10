@@ -22,6 +22,7 @@ func (r *Repository) Migration() {
 	}
 }
 
+// Update updates product that has given sku number and updates its fields
 func (r *Repository) Update(updateProduct Product) error {
 	savedProduct, err := r.FindBySKU(updateProduct.SKU)
 	if err != nil {
@@ -31,6 +32,7 @@ func (r *Repository) Update(updateProduct Product) error {
 	return err
 }
 
+// SearchByString finds Products that matches their sku number or names with given str field
 func (r *Repository) SearchByString(str string, pageIndex, pageSize int) ([]Product, int) {
 	var products []Product
 	convertedStr := "%" + str + "%"
@@ -42,6 +44,7 @@ func (r *Repository) SearchByString(str string, pageIndex, pageSize int) ([]Prod
 	return products, int(count)
 }
 
+// FindBySKU return product with sku number if exist
 func (r *Repository) FindBySKU(sku string) (*Product, error) {
 	var product *Product
 	err := r.db.Where("IsDeleted = ?", 0).Where(Product{SKU: sku}).First(&product).Error
@@ -66,6 +69,7 @@ func (r *Repository) GetAll(pageIndex, pageSize int) ([]Product, int) {
 	return products, int(count)
 }
 
+// Delete product with given sku number if exist
 func (r *Repository) Delete(sku string) error {
 	currentProduct, err := r.FindBySKU(sku)
 	if err != nil {

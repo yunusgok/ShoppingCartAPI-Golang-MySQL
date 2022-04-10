@@ -39,6 +39,7 @@ func (c *Service) UpdateProduct(product *Product) error {
 	return err
 }
 
+// SearchProduct finds Products that matches their sku number or names with given str field
 func (c *Service) SearchProduct(text string, page *pagination.Pages) *pagination.Pages {
 	products, count := c.productRepository.SearchByString(text, page.Page, page.PageSize)
 	page.Items = products

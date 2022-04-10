@@ -36,6 +36,7 @@ func NewService(
 
 }
 
+// CompleteOrder creates an order with user's cart if user has a cart and there are items in it
 func (c *Service) CompleteOrder(userId uint) error {
 	currentCart, err := c.cartRepository.FindOrCreateByUserID(userId)
 	if err != nil {
@@ -56,6 +57,8 @@ func (c *Service) CompleteOrder(userId uint) error {
 	return err
 }
 
+// CancelOrder cancels the order with oid(OrderID) if order is exist and  14 day is not passed
+// Updates Order's IsCanceled field as true
 func (c *Service) CancelOrder(uid, oid uint) error {
 	currentOrder, err := c.orderRepository.FindByOrderID(oid)
 	if err != nil {
@@ -73,6 +76,7 @@ func (c *Service) CancelOrder(uid, oid uint) error {
 	return err
 }
 
+// GetAll return all Orders of the user in given page
 func (c *Service) GetAll(page *pagination.Pages, uid uint) *pagination.Pages {
 	orders, count := c.orderRepository.GetAll(page.Page, page.PageSize, uid)
 	page.Items = orders

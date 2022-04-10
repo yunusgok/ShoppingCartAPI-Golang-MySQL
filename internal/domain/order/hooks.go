@@ -6,6 +6,8 @@ import (
 	"picnshop/internal/domain/product"
 )
 
+// BeforeCreate of Order finds cart of the user and deletes inside the cart.
+// After deletion of items,it deletes cart
 func (order *Order) BeforeCreate(tx *gorm.DB) (err error) {
 
 	var currentCart cart.Cart
@@ -22,6 +24,7 @@ func (order *Order) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
+// BeforeSave of OrderedItem updates products' stock count
 func (orderedItem *OrderedItem) BeforeSave(tx *gorm.DB) (err error) {
 
 	var currentProduct product.Product
@@ -47,6 +50,8 @@ func (orderedItem *OrderedItem) BeforeSave(tx *gorm.DB) (err error) {
 	return
 }
 
+// BeforeUpdate of Order checks if an order is canceled.
+// If Order is canceled the amount will be returned to products' stockCount
 func (order *Order) BeforeUpdate(tx *gorm.DB) (err error) {
 
 	if order.IsCanceled {

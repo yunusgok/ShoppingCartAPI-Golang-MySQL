@@ -7,6 +7,8 @@ import (
 	"mime/multipart"
 )
 
+//ReadCsv reads file with given fileHeader
+// returns 2s array of strings that contains lines and words inside that file
 func ReadCsv(fileHeader *multipart.FileHeader) ([][]string, error) {
 	f, err := fileHeader.Open()
 	if err != nil {

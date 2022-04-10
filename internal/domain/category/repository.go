@@ -45,19 +45,22 @@ func (r *Repository) Create(c *Category) error {
 	return nil
 }
 
+// GetByName returns categories that their names match with given name
 func (r *Repository) GetByName(name string) []Category {
 	var categories []Category
-	r.db.Where("Name LIKE ?", "%"+name+"%").Find(&categories)
+	r.db.Where("Name = ?", name).Find(&categories)
 
 	return categories
 }
 
+// BulkCreate creates categories given in parameter
 func (r *Repository) BulkCreate(categories []*Category) {
 
 	r.db.FirstOrCreate(&categories)
 
 }
 
+// GetAll return all categories in given pageIndex and pageSize
 func (r *Repository) GetAll(pageIndex, pageSize int) ([]Category, int) {
 	var categories []Category
 	var count int64

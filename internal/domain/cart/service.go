@@ -11,7 +11,8 @@ type Service struct {
 	productRepository  product.Repository
 }
 
-func NewService(cartRepository Repository, itemRepository ItemRepository, productRepository product.Repository) *Service {
+func NewService(
+	cartRepository Repository, itemRepository ItemRepository, productRepository product.Repository) *Service {
 	cartRepository.Migration()
 	itemRepository.Migration()
 	return &Service{
@@ -22,7 +23,7 @@ func NewService(cartRepository Repository, itemRepository ItemRepository, produc
 
 }
 
-// TODO: add item and update item can be combined
+// AddItem adds the product with given amount to user's cart
 func (c *Service) AddItem(userID uint, sku string, count int) error {
 	currentProduct, err := c.productRepository.FindBySKU(sku)
 	if err != nil {
@@ -47,6 +48,7 @@ func (c *Service) AddItem(userID uint, sku string, count int) error {
 	return err
 }
 
+// UpdateItem updates the amount of product inside user's cart
 func (c *Service) UpdateItem(userID uint, sku string, count int) error {
 	currentProduct, err := c.productRepository.FindBySKU(sku)
 	if err != nil {
@@ -69,6 +71,7 @@ func (c *Service) UpdateItem(userID uint, sku string, count int) error {
 	return err
 }
 
+// GetCartItems returns the items inside user's cart
 func (c *Service) GetCartItems(userId uint) ([]Item, error) {
 	currentCart, err := c.cartRepository.FindOrCreateByUserID(userId)
 	if err != nil {

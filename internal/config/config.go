@@ -30,6 +30,8 @@ type (
 	}
 )
 
+// GetAllConfigValues reads config file given as a parameter
+// returns Configuration object
 func GetAllConfigValues(configFile string) (configuration *Configuration, err error) {
 	newConfigReader(configFile)
 	if err = cfgReader.v.ReadInConfig(); err != nil {
@@ -46,6 +48,7 @@ func GetAllConfigValues(configFile string) (configuration *Configuration, err er
 	return configuration, err
 }
 
+// newConfigReader creates a new reader with given fileName
 func newConfigReader(configFile string) {
 	v := viper.GetViper()
 	v.SetConfigType("yaml")

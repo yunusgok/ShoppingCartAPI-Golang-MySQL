@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// HandleError return error response to  given context with given error
 func HandleError(g *gin.Context, err error) {
 
 	g.JSON(
