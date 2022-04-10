@@ -112,9 +112,9 @@ func RegisterProductHandlers(r *gin.Engine, dbs Databases) {
 	productGroup.POST(
 		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), productController.CreateProduct)
 	productGroup.DELETE(
-		"", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.DeleteProduct)
+		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), productController.DeleteProduct)
 	productGroup.PATCH(
-		"", middleware.AuthUserMiddleware(AppConfig.JwtSettings.SecretKey), productController.UpdateProduct)
+		"", middleware.AuthAdminMiddleware(AppConfig.JwtSettings.SecretKey), productController.UpdateProduct)
 
 }
 
