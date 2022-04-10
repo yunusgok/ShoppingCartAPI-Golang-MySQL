@@ -26,7 +26,7 @@ func NewOrderController(orderService *order.Service) *Controller {
 // @Param        Authorization  header    string  true  "Authentication header"
 // @Success 200 {object} api_helper.Response
 // @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart [post]
+// @Router /order [post]
 func (c *Controller) CompleteOrder(g *gin.Context) {
 	userId := api_helper.GetUserId(g)
 
@@ -67,7 +67,7 @@ func (c *Controller) CancelOrder(g *gin.Context) {
 
 	g.JSON(
 		http.StatusCreated, api_helper.Response{
-			Message: "Order Created",
+			Message: "Order Canceled",
 		})
 }
 
@@ -76,6 +76,7 @@ func (c *Controller) CancelOrder(g *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param        Authorization  header    string  true  "Authentication header"
 // @Param page query int false "Page number"
 // @Param pageSize query int false "Page size"
 // @Success 200 {object} pagination.Pages

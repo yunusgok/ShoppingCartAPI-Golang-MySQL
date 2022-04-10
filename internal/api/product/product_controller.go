@@ -46,8 +46,8 @@ func (c *Controller) GetProducts(g *gin.Context) {
 // @Tags Product
 // @Accept json
 // @Produce json
-// @Param CreateProductRequest body CreateProductRequest true "product information"
 // @Param Authorization  header    string  true  "Authentication header"
+// @Param CreateProductRequest body CreateProductRequest true "product information"
 // @Success 200 {object} api_helper.Response
 // @Failure 400  {object} api_helper.ErrorResponse
 // @Router /product [post]

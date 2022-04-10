@@ -57,7 +57,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/cart/item": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -66,9 +68,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Order"
+                    "Cart"
                 ],
-                "summary": "CompleteOrder with items in user's cart",
+                "summary": "AddItem add product with given amount to cart of user",
                 "parameters": [
                     {
                         "type": "string",
@@ -76,6 +78,15 @@ const docTemplate = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "product information",
+                        "name": "ItemCartRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.ItemCartRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -276,6 +287,13 @@ const docTemplate = `{
                 "summary": "GetOrders list of user's orders",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "description": "Page number",
                         "name": "page",
@@ -293,6 +311,41 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/pagination.Pages"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "CompleteOrder with items in user's cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api_helper.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/api_helper.ErrorResponse"
                         }
                     }
                 }
@@ -396,6 +449,13 @@ const docTemplate = `{
                 "summary": "CreateProduct with given fields",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Authentication header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "product information",
                         "name": "CreateProductRequest",
                         "in": "body",
@@ -403,13 +463,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/product.CreateProductRequest"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {

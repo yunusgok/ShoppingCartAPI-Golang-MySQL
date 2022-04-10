@@ -196,6 +196,7 @@ paths:
       summary: GetCart list ot items in user's cart
       tags:
       - Cart
+  /cart/item:
     patch:
       consumes:
       - application/json
@@ -234,6 +235,12 @@ paths:
         name: Authorization
         required: true
         type: string
+      - description: product information
+        in: body
+        name: ItemCartRequest
+        required: true
+        schema:
+          $ref: '#/definitions/cart.ItemCartRequest'
       produces:
       - application/json
       responses:
@@ -245,9 +252,9 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/api_helper.ErrorResponse'
-      summary: CompleteOrder with items in user's cart
+      summary: AddItem add product with given amount to cart of user
       tags:
-      - Order
+      - Cart
   /category:
     get:
       consumes:
@@ -363,6 +370,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Page number
         in: query
         name: page
@@ -379,6 +391,29 @@ paths:
           schema:
             $ref: '#/definitions/pagination.Pages'
       summary: GetOrders list of user's orders
+      tags:
+      - Order
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_helper.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api_helper.ErrorResponse'
+      summary: CompleteOrder with items in user's cart
       tags:
       - Order
   /product:
@@ -470,17 +505,17 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: Authentication header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: product information
         in: body
         name: CreateProductRequest
         required: true
         schema:
           $ref: '#/definitions/product.CreateProductRequest'
-      - description: Authentication header
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:

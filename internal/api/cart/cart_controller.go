@@ -26,7 +26,7 @@ func NewCartController(service *cart.Service) *Controller {
 // @Param ItemCartRequest body ItemCartRequest true "product information"
 // @Success 200 {object} api_helper.Response
 // @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart [post]
+// @Router /cart/item [post]
 func (c *Controller) AddItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
@@ -55,7 +55,7 @@ func (c *Controller) AddItem(g *gin.Context) {
 // @Param ItemCartRequest body ItemCartRequest true "product information"
 // @Success 200 {object} api_helper.Response
 // @Failure 400  {object} api_helper.ErrorResponse
-// @Router /cart [patch]
+// @Router /cart/item [patch]
 func (c *Controller) UpdateItem(g *gin.Context) {
 	var req ItemCartRequest
 	if err := g.ShouldBind(&req); err != nil {
