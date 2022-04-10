@@ -32,9 +32,7 @@ go run main.go
 
 ## API Reference
 Project has Swagger integration and it can be reached on
-```http
-localhost:8080/swagger/index.html
-``` 
+[Local Swagger Doc](http://localhost:8080/swagger/index.html)
 after running the project
 
 ### Authantication and Authorization
