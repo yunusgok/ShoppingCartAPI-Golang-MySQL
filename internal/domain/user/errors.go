@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	ErrUserExistWithName = errors.New("User already exist with same username in database")
+	ErrUserExistWithName = errors.New("Username already exist")
 	ErrUserNotFound      = errors.New("User not found")
 	//TODO: Validation error can be detailed
 	ErrMismatchedPasswords = errors.New("Given passwords does not match")
