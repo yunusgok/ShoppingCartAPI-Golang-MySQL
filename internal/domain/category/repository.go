@@ -52,11 +52,10 @@ func (r *Repository) GetByName(name string) []Category {
 	return categories
 }
 
-//TODO: bulk insert library exist look for implementation
 func (r *Repository) BulkCreate(categories []*Category) {
-	for _, c := range categories {
-		r.db.Where(Category{Name: c.Name}).Attrs(Category{Name: c.Name}).FirstOrCreate(&c)
-	}
+
+	r.db.FirstOrCreate(&categories)
+
 }
 
 func (r *Repository) GetAll(pageIndex, pageSize int) ([]Category, int) {
